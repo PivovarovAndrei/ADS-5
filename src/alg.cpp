@@ -55,7 +55,6 @@ std::string infx2pstfx(std::string inf) {
   return post;
 }
 
-int eval(std::string pref) {
   // добавьте код
   int eval(std::string post) {
   TStack<int, 100> stack2;
