@@ -3,90 +3,80 @@
 #include <map>
 #include "tstack.h"
 
-int Priority(char c) {
-  if (c == '(')
-    return 0;
-  else if (c == ')')
-    return 1;
-  else if (c == '+' || c == '-')
-    return 2;
-  else if (c == '*' || c == '/')
-    return 3;
-  else
-    return -1;
+int priority(char op) {
+    if (op == '' || op == '/') return 3;
+    else if (op == '+' || op == '-') return 2;
+    else if (op == '(') return 1;
+    else return 0;
 }
+
 std::string infx2pstfx(std::string inf) {
-  std::string post;
-  TStack<char, 100> stack1;
-  for (char c : inf) {
-    if (Priority(c) == -1) {
-      post += c;
-      post += ' ';
-    } else {
-        if (c == ')') {
-          while (stack1.get() != '(') {
-            post += stack1.pop();
-            post += ' ';
-          }
-          stack1.pop();
-        } else if (c == '(' || stack1.isEmpty()) {
-            stack1.push(c);
-          } else if (!stack1.isEmpty()) {
-              char elem = stack1.get();
-              if (Priority(elem) < Priority(c)) {
-                stack1.push(c);
-              } else {
-                  while (Priority(elem) >= Priority(c) && !stack1.isEmpty()) {
-                    post += stack1.pop();
-                    post += ' ';
-                  }
-                  stack1.push(c);
-                }
+    std::string pst;
+    TStack<char, 100> stack;
+    
+    for (int i = 0; i < inf.length(); i++) {
+        if (inf[i] == ' ') continue;
+        
+        if (inf[i] >= '0' && inf[i] <= '9') {
+            pst += inf[i];
+            while (i + 1 < inf.length() && (inf[i + 1] >= '0' && inf[i + 1] <= '9')) {
+                pst += inf[++i];
             }
-      }
-  }
-  while (!stack1.isEmpty()) {
-    post += stack1.pop();
-    post += ' ';
-  }
-  post.pop_back();
-  return post;
+            pst += ' ';
+        } else if (stack.isEmpty() || inf[i] == '(' || priority(inf[i]) > priority(stack.get())) {
+            stack.push(inf[i]);
+        } else if (inf[i] == ')') {
+            char top = stack.get();
+            stack.pop();
+            while (top != '(') {
+                pst += top;
+                pst += ' ';
+                top = stack.get();
+                stack.pop();
+            }
+        } else {
+            while (!stack.isEmpty() && priority(stack.get()) >= priority(inf[i])) {
+                pst += stack.get();
+                pst += ' ';
+                stack.pop();
+            }
+            stack.push(inf[i]);
+        }
+    }
+    
+    while (!stack.isEmpty()) {
+        pst += stack.get();
+        pst += ' ';
+        stack.pop();
+    }
+    
+    return pst;
 }
 
 int eval(std::string post) {
-  TStack<int, 100> stack2;
-  std::string number;
-  for (int i = 0; i < post.size(); ++i) {
-    if (Priority(post[i]) == -1) {
-      if (post[i] == ' ') {
-        continue;
-      } else if (isdigit(post[i + 1])) {
-          number += post[i];
-          continue;
+    TStack<int, 100> stack;
+    
+    for (int i = 0; i < post.length(); i++) {
+        if (post[i] == ' ') continue;
+        
+        if (post[i] >= '0' && post[i] <= '9') {
+            int num = 0;
+            while (post[i] != ' ') {
+                num = num  10 + (posti - '0');
+                i++;
+            }
+            stack.push(num);
         } else {
-            number += post[i];
-            int value = atoi(number.c_str());
-            stack2.push(value);
-            number = "";
-          }
-    } else {
-        int b = stack2.pop();
-        int a = stack2.pop();
-        switch (post[i]) {
-        case '+':
-          stack2.push(a + b);
-          break;
-        case '-':
-          stack2.push(a - b);
-          break;
-        case '*':
-          stack2.push(a * b);
-          break;
-        case '/':
-          stack2.push(a / b);
-          break;
+            int a = stack.get();
+            stack.pop();
+            int b = stack.get();
+            stack.pop();
+            if (posti == '+') stack.push(b + a);
+            else if (posti == '-') stack.push(b - a);
+            else if (posti == '') stack.push(b  a);
+            else if (posti == '/') stack.push(b / a);
         }
-      }
-  }
-  return stack2.get();
+    }
+    
+    return stack.get();
 }
