@@ -31,14 +31,14 @@ std::string infx2pstfx(std::string inf) {
             post += ' ';
           }
           stack1.pop();
-        } else if (c == '(' || stack1.isempty()) {
+        } else if (c == '(' || stack1.isEmpty()) {
             stack1.push(c);
-          } else if (!stack1.isempty()) {
+          } else if (!stack1.isEmpty()) {
               char elem = stack1.get();
               if (Priority(elem) < Priority(c)) {
                 stack1.push(c);
               } else {
-                  while (Priority(elem) >= Priority(c) && !stack1.isempty()) {
+                  while (Priority(elem) >= Priority(c) && !stack1.isEmpty()) {
                     post += stack1.pop();
                     post += ' ';
                   }
@@ -47,7 +47,7 @@ std::string infx2pstfx(std::string inf) {
             }
       }
   }
-  while (!stack1.isempty()) {
+  while (!stack1.isEmpty()) {
     post += stack1.pop();
     post += ' ';
   }
