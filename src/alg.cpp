@@ -17,7 +17,6 @@ int Priority(char c) {
 }
 std::string infx2pstfx(std::string inf) {
   // добавьте код
-  return std::string("");
   std::string post;
   TStack<char, 100> stack1;
   for (char c : inf) {
