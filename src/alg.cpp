@@ -22,7 +22,8 @@ std::string infx2pstfx(std::string inf) {
                 stack1.pop();
             }
         } else {
-            while (!stack1.isempty() && stack1.get() != '(' && (inf[i] =='+' || stack1.get() =='*' || stack1.get() == '/')) {
+            while (!stack1.isempty() && stack1.get() != '(' &&
+                (inf[i] =='+' || stack1.get() =='*' || stack1.get() == '/')) {
             (inf[i] =='+' || stack1.get() =='*' || stack1.get() == '/')) {
                 pst += stack1.get();
                 pst += ' ';
