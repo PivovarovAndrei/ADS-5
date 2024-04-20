@@ -3,80 +3,68 @@
 #include <map>
 #include "tstack.h"
 
-int priority(char op) {
-    if (op == '' || op == '/') return 3;
-    else if (op == '+' || op == '-') return 2;
-    else if (op == '(') return 1;
-    else return 0;
-}
-
 std::string infx2pstfx(std::string inf) {
+    TStack<char, 100> stack1;
     std::string pst;
-    TStack<char, 100> stack;
-    
     for (int i = 0; i < inf.length(); i++) {
-        if (inf[i] == ' ') continue;
-        
         if (inf[i] >= '0' && inf[i] <= '9') {
             pst += inf[i];
-            while (i + 1 < inf.length() && (inf[i + 1] >= '0' && inf[i + 1] <= '9')) {
-                pst += inf[++i];
-            }
             pst += ' ';
-        } else if (stack.isEmpty() || inf[i] == '(' || priority(inf[i]) > priority(stack.get())) {
-            stack.push(inf[i]);
+        } else if (inf[i] == '(') {
+            stack1.push('(');
         } else if (inf[i] == ')') {
-            char top = stack.get();
-            stack.pop();
-            while (top != '(') {
-                pst += top;
+            while (!stack1.isempty() && stack1.get() != '(') {
+                pst += stack1.get();
                 pst += ' ';
-                top = stack.get();
-                stack.pop();
+                stack1.pop();
+            }
+            if (!stack1.isempty()) {
+                stack1.pop();
             }
         } else {
-            while (!stack.isEmpty() && priority(stack.get()) >= priority(inf[i])) {
-                pst += stack.get();
+            while (!stack1.isempty() && stack1.get() != '(' && (inf[i] =='+' || stack1.get() =='*' || stack1.get() == '/')) {
+            (inf[i] =='+' || stack1.get() =='*' || stack1.get() == '/')) {
+                pst += stack1.get();
                 pst += ' ';
-                stack.pop();
+                stack1.pop();
             }
-            stack.push(inf[i]);
+            stack1.push(inf[i]);
         }
     }
-    
-    while (!stack.isEmpty()) {
-        pst += stack.get();
+    while (!stack1.isempty()) {
+        pst += stack1.get();
         pst += ' ';
-        stack.pop();
+        stack1.pop();
     }
-    
+    if (!pst.empty()) {
+        pst.erase(pst.size() - 1);
+    }
     return pst;
 }
-
-int eval(std::string post) {
-    TStack<int, 100> stack;
-    
-    for (int i = 0; i < post.length(); i++) {
-        if (post[i] == ' ') continue;
-        
-        if (post[i] >= '0' && post[i] <= '9') {
-            int num = 0;
-            while (post[i] != ' ') {
-                num = num  10 + (posti - '0');
-                i++;
+int eval(std::string pref) {
+    TStack<int, 100> stack2;
+    for (int i = 0; i < pref.length(); i++) {
+        char ch = pref[i];
+        if (isdigit(ch)) {
+            stack2.push(ch - '0');
+        } else if (ch == '+' || ch == '-' || ch == '/' || ch == '*') {
+            int operand2 = stack2.pop();
+            int operand1 = stack2.pop();
+            switch (ch) {
+                case '+':
+                    stack2.push(operand1 + operand2);
+                    break;
+                case '-':
+                    stack2.push(operand1 - operand2);
+                    break;
+                case '*':
+                    stack2.push(operand1 * operand2);
+                    break;
+                case '/':
+                    stack2.push(operand1 / operand2);
+                    break;
             }
-            stack.push(num);
-        } else {
-            int a = stack.get();
-            stack.pop();
-            int b = stack.get();
-            stack.pop();
-            if (posti == '+') stack.push(b + a);
-            else if (posti == '-') stack.push(b - a);
-            else if (posti == '') stack.push(b  a);
-            else if (posti == '/') stack.push(b / a);
         }
     }
-    
-    return stack.get();
+    return stack2.pop();
 }
