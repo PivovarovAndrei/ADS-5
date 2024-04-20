@@ -42,6 +42,7 @@ std::string infx2pstfx(std::string inf) {
     }
     return pst;
 }
+
 int eval(std::string pref) {
     TStack<int, 100> stack2;
     for (int i = 0; i < pref.length(); i++) {
