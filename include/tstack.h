@@ -41,6 +41,4 @@ class TStack {
             return (top == -1);
         }
 };
-};
-
 #endif  // INCLUDE_TSTACK_H_
